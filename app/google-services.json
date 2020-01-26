@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "297451137",
+    "firebase_url": "https://ejemplos-firebase-f1b9c.firebaseio.com",
+    "project_id": "ejemplos-firebase-f1b9c",
+    "storage_bucket": "ejemplos-firebase-f1b9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297451137:android:7754527306a69c10779780",
+        "android_client_info": {
+          "package_name": "com.example.ejemplofirestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297451137-9q913sgun35g90cba84d55e29utnj6bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzSRAhSp9flUEGd6ejB5ebXbwaScOEXkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297451137-9q913sgun35g90cba84d55e29utnj6bo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297451137:android:47496057f0ee6bc3779780",
+        "android_client_info": {
+          "package_name": "com.example.leeconautentificacion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297451137-9q913sgun35g90cba84d55e29utnj6bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzSRAhSp9flUEGd6ejB5ebXbwaScOEXkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297451137-9q913sgun35g90cba84d55e29utnj6bo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297451137:android:ebb022ed9ede2866779780",
+        "android_client_info": {
+          "package_name": "com.example.leesinautentificacion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297451137-9q913sgun35g90cba84d55e29utnj6bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzSRAhSp9flUEGd6ejB5ebXbwaScOEXkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297451137-9q913sgun35g90cba84d55e29utnj6bo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
