@@ -15,6 +15,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.common.collect.MapMaker;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -46,7 +47,10 @@ public class RecylerClass extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(RecylerClass.this, Editar.class);
-                startActivity(i);
+                String c = db.collection("España").document("Alicante").getId();
+                Toast.makeText(getApplicationContext(), c, Toast.LENGTH_SHORT).show();
+                //i.putExtra("id", db.collection("España").document("Valladolid").getId());
+                //startActivity(i);
             }
         });
         adapter.onLongClickListener(new View.OnLongClickListener() {
@@ -59,7 +63,7 @@ public class RecylerClass extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                db.collection("España").document("Malaga")
+                                db.document("Alicante")
                                         .delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
