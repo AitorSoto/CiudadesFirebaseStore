@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,14 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.collect.MapMaker;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.ThrowOnExtraProperties;
 
 
 public class RecylerClass extends AppCompatActivity {
@@ -49,9 +53,13 @@ public class RecylerClass extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(RecylerClass.this, Editar.class);
-                DocumentSnapshot d = adapter.getSnapshots().getSnapshot(recyclerView.getChildAdapterPosition(v));
-                Toast.makeText(getApplicationContext(), d.getId() + " " + d.get("pais"), Toast.LENGTH_SHORT).show();
-                i.putExtra("id", d.getId());
+                int pos = recyclerView.getChildAdapterPosition(v);
+                final String key = adapter.getSnapshots().getSnapshot(pos).getId();
+                Ciudad ciudad = adapter.getItem(pos);
+
+
+                i.putExtra("Clave", key);
+                i.putExtra("Ciudad", ciudad);
                 startActivity(i);
             }
         });
@@ -59,26 +67,23 @@ public class RecylerClass extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(RecylerClass.this);
+                final View view = v;
                 builder.setMessage("¿Quieres eliminar esta ciudad?")
                         .setCancelable(false)
                         .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                db.document("Alicante")
-                                        .delete()
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getApplicationContext(),"DocumentSnapshot successfully deleted!", Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(getApplicationContext(),"Error deleting document", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                final String key = adapter.getSnapshots().getSnapshot(recyclerView.getChildAdapterPosition(view)).getId();
+                                firebaseFirestore.collection("España").document(key).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(RecylerClass.this, "Se ha elimnado el registro", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(RecylerClass.this, "Fallo al eliminar", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {

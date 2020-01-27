@@ -33,14 +33,16 @@ public class Editar extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editar);
-        id = getIntent().getStringExtra("id");
         db =  FirebaseFirestore.getInstance();
-        db.collection("España");
+       // Toast.makeText(getApplicationContext(), db.collection(id).get().toString(), Toast.LENGTH_SHORT).show();
         nombre = (EditText)findViewById(R.id.nombreEditar);
         pais = (EditText)findViewById(R.id.paisEditar);
         comunidad = (EditText)findViewById(R.id.comunidadEditar);
         fab = (FloatingActionButton)findViewById(R.id.fabEditar);
-        citiesRef = db.collection("España").document(id);
+        String key = getIntent().getExtras().getString("Clave");
+        citiesRef = db.collection("España").document(key);
+
+        c = getIntent().getExtras().getParcelable("Ciudad");
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,11 +54,14 @@ public class Editar extends AppCompatActivity {
                 }
             }
         });
+        asignaTextoCampos();
 
     }
 
-    private void añadeInformacionCampos(){
-
+    private void asignaTextoCampos(){
+        nombre.setText(c.getNombre());
+        comunidad.setText(c.getComunidad());
+        pais.setText(c.getPais());
     }
 
     @Override

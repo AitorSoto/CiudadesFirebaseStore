@@ -1,9 +1,11 @@
 package com.example.ejemplofirestore;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
-public class Ciudad {
+public class Ciudad implements Parcelable {
     private String nombre;
     private String comunidad;
     private String pais;
@@ -59,4 +61,37 @@ public class Ciudad {
                 ", pais='" + pais + '\'' +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.nombre);
+        dest.writeString(this.comunidad);
+        dest.writeString(this.pais);
+        dest.writeParcelable((Parcelable) this.foto, flags);
+    }
+
+    protected Ciudad(Parcel in) {
+        this.nombre = in.readString();
+        this.comunidad = in.readString();
+        this.pais = in.readString();
+        this.foto = in.readParcelable(ImageView.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Ciudad> CREATOR = new Parcelable.Creator<Ciudad>() {
+        @Override
+        public Ciudad createFromParcel(Parcel source) {
+            return new Ciudad(source);
+        }
+
+        @Override
+        public Ciudad[] newArray(int size) {
+            return new Ciudad[size];
+        }
+    };
 }
