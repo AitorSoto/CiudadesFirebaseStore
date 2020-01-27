@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText pasword;
     private Button sendButton;
     private Button btCrear;
+    private Button iniciarSinAut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
         pasword = (EditText) findViewById(R.id.password);
         sendButton = (Button) findViewById(R.id.log);
         btCrear = (Button) findViewById(R.id.register);
+        iniciarSinAut = (Button) findViewById(R.id.iniciarSinAut);
+        iniciarSinAut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, RecylerClass.class);
+                startActivity(i);
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
 
         /////Iniciar sesión con usuario y contraseña

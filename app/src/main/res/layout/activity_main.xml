@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
     <RelativeLayout
+        android:id="@+id/principal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <EditText
@@ -27,6 +28,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"/>
         <RelativeLayout
+            android:id="@+id/botones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/password"
@@ -44,5 +46,13 @@
                 android:text="Registrarse"
                 android:layout_toRightOf="@id/log"/>
         </RelativeLayout>
+        <Button
+            android:layout_centerHorizontal="true"
+            android:id="@+id/iniciarSinAut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Peaje"
+            android:layout_below="@id/botones"
+            android:backgroundTint="@color/colorPrimary"/>
     </RelativeLayout>
 </RelativeLayout>
