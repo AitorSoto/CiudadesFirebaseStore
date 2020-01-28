@@ -1,9 +1,13 @@
 package com.example.ejemplofirestore;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,13 +32,16 @@ public class Editar extends AppCompatActivity {
     private FloatingActionButton fab;
     private Ciudad c;
     DocumentReference citiesRef;
+    ImageView imagen;
+    private static final int PICK_IMAGE = 100;
+    Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editar);
         db =  FirebaseFirestore.getInstance();
-       // Toast.makeText(getApplicationContext(), db.collection(id).get().toString(), Toast.LENGTH_SHORT).show();
+        imagen = (ImageView)findViewById(R.id.imagenEditar);
         nombre = (EditText)findViewById(R.id.nombreEditar);
         pais = (EditText)findViewById(R.id.paisEditar);
         comunidad = (EditText)findViewById(R.id.comunidadEditar);
@@ -55,6 +62,12 @@ public class Editar extends AppCompatActivity {
             }
         });
         asignaTextoCampos();
+        imagen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openGallery();
+            }
+        });
 
     }
 
@@ -72,5 +85,19 @@ public class Editar extends AppCompatActivity {
 
     private boolean camposRellenos(){
         return !comunidad.getText().toString().isEmpty() && !pais.getText().toString().isEmpty() && !nombre.getText().toString().isEmpty();
+    }
+
+    private void openGallery(){
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            imageUri = data.getData();
+            imagen.setImageURI(imageUri);
+        }
     }
 }

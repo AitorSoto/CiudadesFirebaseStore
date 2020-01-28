@@ -45,13 +45,13 @@ public class Ciudad implements Parcelable {
         this.pais = pais;
     }
 
-    public ImageView getFoto() {
+    /*public ImageView getFoto() {
         return foto;
-    }
+    }*/
 
-    public void setFoto(ImageView foto) {
+    /*public void setFoto(ImageView foto) {
         this.foto = foto;
-    }
+    }*/
 
     @Override
     public String toString() {
@@ -73,14 +73,14 @@ public class Ciudad implements Parcelable {
         dest.writeString(this.nombre);
         dest.writeString(this.comunidad);
         dest.writeString(this.pais);
-        dest.writeParcelable((Parcelable) this.foto, flags);
+        //dest.writeParcelable((Parcelable) this.foto, flags);
     }
 
     protected Ciudad(Parcel in) {
         this.nombre = in.readString();
         this.comunidad = in.readString();
         this.pais = in.readString();
-        this.foto = in.readParcelable(ImageView.class.getClassLoader());
+        //this.foto = in.readParcelable(ImageView.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Ciudad> CREATOR = new Parcelable.Creator<Ciudad>() {
