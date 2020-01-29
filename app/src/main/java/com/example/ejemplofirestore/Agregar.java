@@ -37,6 +37,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 
 public class Agregar extends AppCompatActivity {
@@ -45,13 +47,11 @@ public class Agregar extends AppCompatActivity {
     EditText comunidad, pais, nombre;
     ImageView imagen;
     ProgressBar mProgressBar;
-    private static final int PICK_IMAGE = 1;
-    Uri imageUri;
+    private final int PICK_IMAGE_REQUEST = 22;
+    private Uri filePath;
     Ciudad c;
     private Uri mImageUri;
     private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
-    private StorageTask mUploadTask;
 
 
     @Override
@@ -60,7 +60,7 @@ public class Agregar extends AppCompatActivity {
         setContentView(R.layout.agregar);
         db = FirebaseFirestore.getInstance();
         db.collection("España");
-        mStorageRef = FirebaseStorage.getInstance().getReference("/imagenes/alicante.jpg");
+        mStorageRef = FirebaseStorage.getInstance().getReference();
         comunidad = (EditText)findViewById(R.id.comunidad);
         pais = (EditText)findViewById(R.id.pais);
         nombre = (EditText)findViewById(R.id.nombre);
@@ -73,16 +73,11 @@ public class Agregar extends AppCompatActivity {
         });
         mProgressBar = (ProgressBar)findViewById(R.id.progress_bar);
         fab = (FloatingActionButton)findViewById(R.id.fab);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (camposRellenos()){
-                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), null);
-                    db.collection("España").document(nombre.getText().toString()).set(c);
-                    uploadFile();
-                    Toast.makeText(getApplicationContext(), "Ciudad añadida", Toast.LENGTH_SHORT).show();
-                    finish();
+                    uploadImage();
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "No todos los campos estan rellenos", Toast.LENGTH_SHORT).show();
@@ -104,73 +99,83 @@ public class Agregar extends AppCompatActivity {
 
     private void openGallery(){
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, PICK_IMAGE);
+        startActivityForResult(gallery, PICK_IMAGE_REQUEST);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode,int resultCode,Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
 
-        if (requestCode == PICK_IMAGE && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            mImageUri = data.getData();
+        // checking request code and result code
+        // if request code is PICK_IMAGE_REQUEST and
+        // resultCode is RESULT_OK
+        // then set image in the image view
+        if (requestCode == PICK_IMAGE_REQUEST
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null) {
 
-            mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    Picasso.get().load(task.getResult()).into(imagen);
-                }
-            });
+            // Get the Uri of data
+            filePath = data.getData();
+            try {
 
+                // Setting image on image view using Bitmap
+                Bitmap bitmap = MediaStore
+                        .Images
+                        .Media
+                        .getBitmap(
+                                getContentResolver(),
+                                filePath);
+                imagen.setImageBitmap(bitmap);
+            }
+
+            catch (IOException e) {
+                // Log the exception
+                e.printStackTrace();
+            }
         }
     }
 
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
+    private void uploadImage()
+    {
+        if (filePath != null) {
+            // Defining the child of storageReference
+            StorageReference ref = mStorageRef.child("imagenes/"+ nombre.getText().toString()+".jpg");
 
-    private void uploadFile() {
-        if (mImageUri != null) {
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
-                    + "." + getFileExtension(mImageUri));
+            // adding listeners on upload
+            // or failure of image
+            ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // Image uploaded successfully
+                    // Dismiss dialog
+                    String nombreCiudad = nombre.getText().toString();
+                    Toast.makeText(getApplicationContext(),"Image Uploaded!!",Toast.LENGTH_SHORT).show();
+                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/"+nombreCiudad+".jpg");
+                    db.collection("España").document(nombre.getText().toString()).set(c);
 
-            mUploadTask = fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(getApplicationContext(), "Subiendo", Toast.LENGTH_SHORT).show();
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBar.setProgress(0);
-                                }
-                            }, 500);
+                    Toast.makeText(getApplicationContext(), "Ciudad añadida", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e){
+                    // Error, Image not uploaded
+                    Toast.makeText(getApplicationContext(),"Failed " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            })
+            .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                // Progress Listener for loading
+                // percentage on the dialog box
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot)
+                {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                    mProgressBar.setProgress((int)progress);
+                }
+            });
 
-                            Toast.makeText(getApplicationContext(), "Upload successful", Toast.LENGTH_LONG).show();
-                            Upload upload = new Upload(nombre.getText().toString().trim(),
-                                    nombre.toString());
-                            String uploadId = mDatabaseRef.push().getKey();
-                            mDatabaseRef.child(uploadId).setValue(upload);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
-        } else {
-            Toast.makeText(this, "No file selected", Toast.LENGTH_SHORT).show();
         }
     }
 }

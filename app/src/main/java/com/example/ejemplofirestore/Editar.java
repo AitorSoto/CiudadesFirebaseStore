@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,14 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 public class Editar extends AppCompatActivity {
     private EditText nombre, pais, comunidad;
@@ -33,6 +29,7 @@ public class Editar extends AppCompatActivity {
     private Ciudad c;
     DocumentReference citiesRef;
     ImageView imagen;
+    private StorageReference mStorageRef;
     private static final int PICK_IMAGE = 100;
     Uri imageUri;
 
@@ -41,6 +38,8 @@ public class Editar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editar);
         db =  FirebaseFirestore.getInstance();
+        c = getIntent().getExtras().getParcelable("Ciudad");
+        mStorageRef = FirebaseStorage.getInstance().getReference(c.getFoto());
         imagen = (ImageView)findViewById(R.id.imagenEditar);
         nombre = (EditText)findViewById(R.id.nombreEditar);
         pais = (EditText)findViewById(R.id.paisEditar);
@@ -49,7 +48,8 @@ public class Editar extends AppCompatActivity {
         String key = getIntent().getExtras().getString("Clave");
         citiesRef = db.collection("España").document(key);
 
-        c = getIntent().getExtras().getParcelable("Ciudad");
+
+        asignaFoto();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,5 +99,14 @@ public class Editar extends AppCompatActivity {
             imageUri = data.getData();
             imagen.setImageURI(imageUri);
         }
+    }
+
+    private void asignaFoto(){
+        mStorageRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                Picasso.get().load(task.getResult()).into(imagen);
+            }
+        });
     }
 }
