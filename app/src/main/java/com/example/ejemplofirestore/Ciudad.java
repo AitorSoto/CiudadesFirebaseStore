@@ -9,12 +9,12 @@ public class Ciudad implements Parcelable {
     private String nombre;
     private String comunidad;
     private String pais;
-    private ImageView foto;
+    private String foto;
 
     public Ciudad() {
     }
 
-    public Ciudad(String nombre, String comunidad, String pais, ImageView foto) {
+    public Ciudad(String nombre, String comunidad, String pais, String foto) {
         this.nombre = nombre;
         this.comunidad = comunidad;
         this.pais = pais;
@@ -45,13 +45,13 @@ public class Ciudad implements Parcelable {
         this.pais = pais;
     }
 
-    /*public ImageView getFoto() {
+    public String getFoto() {
         return foto;
-    }*/
+    }
 
-    /*public void setFoto(ImageView foto) {
+    public void setFoto(String foto) {
         this.foto = foto;
-    }*/
+    }
 
     @Override
     public String toString() {
@@ -61,7 +61,6 @@ public class Ciudad implements Parcelable {
                 ", pais='" + pais + '\'' +
                 '}';
     }
-
 
     @Override
     public int describeContents() {
@@ -73,17 +72,17 @@ public class Ciudad implements Parcelable {
         dest.writeString(this.nombre);
         dest.writeString(this.comunidad);
         dest.writeString(this.pais);
-        //dest.writeParcelable((Parcelable) this.foto, flags);
+        dest.writeString(this.foto);
     }
 
     protected Ciudad(Parcel in) {
         this.nombre = in.readString();
         this.comunidad = in.readString();
         this.pais = in.readString();
-        //this.foto = in.readParcelable(ImageView.class.getClassLoader());
+        this.foto = in.readString();
     }
 
-    public static final Parcelable.Creator<Ciudad> CREATOR = new Parcelable.Creator<Ciudad>() {
+    public static final Creator<Ciudad> CREATOR = new Creator<Ciudad>() {
         @Override
         public Ciudad createFromParcel(Parcel source) {
             return new Ciudad(source);

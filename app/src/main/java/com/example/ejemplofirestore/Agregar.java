@@ -78,7 +78,7 @@ public class Agregar extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (camposRellenos()){
-                     c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), null);
+                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), null);
                     db.collection("España").document(nombre.getText().toString()).set(c);
                     uploadFile();
                     Toast.makeText(getApplicationContext(), "Ciudad añadida", Toast.LENGTH_SHORT).show();
