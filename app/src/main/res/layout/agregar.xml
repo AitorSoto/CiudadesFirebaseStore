@@ -23,6 +23,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:src="@drawable/account_box"/>
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:outlineAmbientShadowColor="@color/colorPrimary"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
