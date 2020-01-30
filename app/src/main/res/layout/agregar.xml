@@ -67,7 +67,6 @@
             android:id="@+id/progress_bar"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:progress="100"
             android:outlineAmbientShadowColor="@color/colorPrimary"
             android:visibility="visible"
             android:layout_marginTop="20dp"
