@@ -28,8 +28,6 @@ import com.google.firebase.firestore.ThrowOnExtraProperties;
 
 public class RecylerClass extends AppCompatActivity {
     private CiudadAdapter adapter;
-    private Holder holder;
-    private FirebaseFirestore db;
     private RecyclerView recyclerView;
     private Query query;
     private FirebaseFirestore firebaseFirestore;

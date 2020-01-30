@@ -59,6 +59,11 @@
                     android:hint="Pais al que pertenece"
                     android:layout_marginTop="16dp"
                     android:layout_below="@id/comunidadEditar"/>
+                <androidx.core.widget.ContentLoadingProgressBar
+                    android:id="@+id/progress_barEditar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"/>
             </RelativeLayout>
         </LinearLayout>
 

@@ -50,7 +50,6 @@ public class Agregar extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 22;
     private Uri filePath;
     Ciudad c;
-    private Uri mImageUri;
     private StorageReference mStorageRef;
 
 
