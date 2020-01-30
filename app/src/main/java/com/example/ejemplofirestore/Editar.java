@@ -134,9 +134,15 @@ public class Editar extends AppCompatActivity {
 
     private void uploadImage()
     {
-        if (filePath != null) {
+        StorageReference ref = mStorageRef.getRoot().child("imagenes/"+nombre.getText().toString()+".jpg");
+        if (filePath == null) {
+            c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/"+nombre.getText().toString()+".jpg");
+            db.collection("España").document(nombre.getText().toString()).set(c);
+            finish();
+        }
+        else {
             // Defining the child of storageReference
-            StorageReference ref = mStorageRef.getRoot().child("imagenes/"+nombre.getText().toString()+".jpg"); // nombre.getText().toString()+".jpg"
+            // nombre.getText().toString()+".jpg"
 
             // adding listeners on upload
             // or failure of image
@@ -146,8 +152,8 @@ public class Editar extends AppCompatActivity {
                     // Image uploaded successfully
                     // Dismiss dialog
                     String nombreCiudad = nombre.getText().toString();
-                    Toast.makeText(getApplicationContext(),"Image Uploaded!!",Toast.LENGTH_SHORT).show();
-                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/"+nombreCiudad+".jpg");
+                    Toast.makeText(getApplicationContext(), "Image Uploaded!!", Toast.LENGTH_SHORT).show();
+                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/" + nombreCiudad + ".jpg");
                     db.collection("España").document(nombre.getText().toString()).set(c);
 
                     Toast.makeText(getApplicationContext(), "Ciudad añadida", Toast.LENGTH_SHORT).show();
@@ -156,22 +162,20 @@ public class Editar extends AppCompatActivity {
             })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onFailure(@NonNull Exception e){
+                        public void onFailure(@NonNull Exception e) {
                             // Error, Image not uploaded
-                            Toast.makeText(getApplicationContext(),"Failed " + e.getMessage(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         // Progress Listener for loading
                         // percentage on the dialog box
                         @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot)
-                        {
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int)progress);
+                            mProgressBar.setProgress((int) progress);
                         }
                     });
-
         }
     }
     private void asignaFoto(){
