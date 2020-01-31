@@ -40,6 +40,7 @@ public class Editar extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 22;
     private Uri filePath;
     private ProgressBar mProgressBar;
+    String nombreDocumento;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,7 @@ public class Editar extends AppCompatActivity {
         db =  FirebaseFirestore.getInstance();
         c = getIntent().getExtras().getParcelable("Ciudad");
         mStorageRef = FirebaseStorage.getInstance().getReference(c.getFoto());
+        nombreDocumento = c.getNombre();
         imagen = (ImageView)findViewById(R.id.imagenEditar);
         nombre = (EditText)findViewById(R.id.nombreEditar);
         pais = (EditText)findViewById(R.id.paisEditar);
@@ -74,7 +76,6 @@ public class Editar extends AppCompatActivity {
                 openGallery();
             }
         });
-
     }
 
     private void asignaTextoCampos(){
@@ -116,12 +117,7 @@ public class Editar extends AppCompatActivity {
             try {
 
                 // Setting image on image view using Bitmap
-                Bitmap bitmap = MediaStore
-                        .Images
-                        .Media
-                        .getBitmap(
-                                getContentResolver(),
-                                filePath);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 imagen.setImageBitmap(bitmap);
             }
 
@@ -153,29 +149,39 @@ public class Editar extends AppCompatActivity {
                     // Dismiss dialog
                     String nombreCiudad = nombre.getText().toString();
                     Toast.makeText(getApplicationContext(), "Image Uploaded!!", Toast.LENGTH_SHORT).show();
-                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/" + nombreCiudad + ".jpg");
-                    db.collection("España").document(nombre.getText().toString()).set(c);
 
                     Toast.makeText(getApplicationContext(), "Ciudad añadida", Toast.LENGTH_SHORT).show();
+                    db.collection("España").document(nombreDocumento).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(Editar.this, "Se ha elimnado el registro", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Editar.this, "Fallo al eliminar", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/" + nombreCiudad + ".jpg");
+                    db.collection("España").document(nombre.getText().toString()).set(c);
                     finish();
                 }
             })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Error, Image not uploaded
-                            Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        // Progress Listener for loading
-                        // percentage on the dialog box
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Error, Image not uploaded
+                    Toast.makeText(getApplicationContext(), "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            })
+            .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                // Progress Listener for loading
+                // percentage on the dialog box
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                    mProgressBar.setProgress((int) progress);
+                }
+            });
         }
     }
     private void asignaFoto(){
