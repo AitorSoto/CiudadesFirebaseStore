@@ -120,18 +120,20 @@ public class Agregar extends AppCompatActivity {
 
     private void uploadImage()
     {
+        StorageReference ref;
+        final String nombreCiudad = nombre.getText().toString();
         if (filePath != null) {
             // Defining the child of storageReference
-            StorageReference ref = mStorageRef.child("imagenes/"+ nombre.getText().toString()+".jpg");
+            ref = mStorageRef.child("imagenes/"+ nombre.getText().toString()+".jpg");
 
             // adding listeners on upload
             // or failure of image
+
             ref.putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // Image uploaded successfully
                     // Dismiss dialog
-                    String nombreCiudad = nombre.getText().toString();
                     Toast.makeText(getApplicationContext(),"Image Uploaded!!",Toast.LENGTH_SHORT).show();
                     c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/"+nombreCiudad+".jpg");
                     db.collection("España").document(nombre.getText().toString()).set(c);
@@ -158,6 +160,13 @@ public class Agregar extends AppCompatActivity {
                 }
             });
 
+        }else{
+            ref = mStorageRef.child("imagenes/City_default.png");
+            c = new Ciudad(nombre.getText().toString(), comunidad.getText().toString(), pais.getText().toString(), "/imagenes/City_default.png");
+            db.collection("España").document(nombre.getText().toString()).set(c);
+
+            Toast.makeText(getApplicationContext(), "Ciudad añadida", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 }
